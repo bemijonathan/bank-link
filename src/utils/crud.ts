@@ -1,0 +1,72 @@
+import { Request, Response } from "express";
+import { Model } from "mongoose";
+import { logs } from "./logger";
+
+const getOne = <T>(model: T) => async (req: Request): Promise<T> => {
+	try {
+		const doc: T = await (model as any)
+			.findOne({ _id: req.params.id })
+			.lean()
+			.exec();
+		return doc;
+	} catch (e) {
+		logs.error(e);
+		throw new Error(e);
+	}
+};
+
+const getMany = <T>(model: T) => async (req?: Request): Promise<T[]> => {
+	try {
+		const t = await (model as any).find({}).lean().exec();
+		return t;
+	} catch (e) {
+		logs.error(e);
+		throw new Error(e);
+	}
+};
+
+const createOne = <T>(model: T) => async (req: Request): Promise<T> => {
+	try {
+		const user = await (model as any).create({ ...req.body });
+		return user;
+	} catch (e) {
+		logs.error(e);
+		throw new Error(e);
+	}
+};
+
+const updateOne = <T>(model: T) => async (req: Request): Promise<T | void> => {
+	try {
+		return await (model as any).updateOne(
+			{
+				_id: req.params.id,
+			},
+			req.body,
+			{ new: true }
+		);
+	} catch (e) {
+		throw new Error(e);
+	}
+};
+
+//  to be edited
+const removeOne = <T>(model: T) => async (req: Request) => {
+	try {
+		const removed = await (model as any)
+			.deleteOne({ _id: req.params.id })
+			.lean()
+			.exec();
+		return removed;
+	} catch (e) {
+		logs.error(e);
+		throw new Error(e);
+	}
+};
+
+export const crudControllers = (model: any) => ({
+	removeOne: removeOne(model),
+	updateOne: updateOne(model),
+	getMany: getMany(model),
+	getOne: getOne(model),
+	createOne: createOne(model),
+});
