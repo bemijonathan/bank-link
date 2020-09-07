@@ -17,15 +17,15 @@ export const signUp = async (req: Request, res: Response) => {
 		let user: User = await Users.create(req.body);
 		let token = generateToken(user.id, user.admin);
 
-		const message = {
-			text:
-				"Welcome to Telegraph BTC  don't forget to Join our whatsapp group. https://chat.whatsapp.com/GeAN5QtymN3CIag0OXH5oJ",
-			from: "TELEGRAPHBTC <support@cointelegraphbitcoin.com>",
-			to: `<${req.body.email}>`,
-			subject: "WELCOME TO COINTELEGRAPHBTC",
-		};
+		// const message = {
+		// 	text:
+		// 		"Welcome to Telegraph BTC  don't forget to Join our whatsapp group. https://chat.whatsapp.com/GeAN5QtymN3CIag0OXH5oJ",
+		// 	from: "TELEGRAPHBTC <support@cointelegraphbitcoin.com>",
+		// 	to: `<${req.body.email}>`,
+		// 	subject: "WELCOME TO COINTELEGRAPHBTC",
+		// };
 
-		mailer.send(message);
+		// mailer.send(message);
 
 		f.sendResponse(res, 201, { email: user.email, token });
 	} catch (error) {
@@ -66,17 +66,17 @@ export const resetPassword = async (req: Request, res: Response) => {
 
 		if (user) {
 			let token = generateToken(user.id, user.admin);
-			const message = {
-				text:
-					"click on this link to reset your password.\n https://cointelegraphbitcoin.com/new-password?token=" +
-					token,
-				from: "TELEGRAPHBTC <support@cointelegraphbitcoin.com>",
-				to: `<${req.body.email}>`,
-				subject: "RESET PASSWORD COINTELEGRAPHBTC",
-			};
-			logs.success("user exists");
+			// const message = {
+			// 	text:
+			// 		"click on this link to reset your password.\n https://cointelegraphbitcoin.com/new-password?token=" +
+			// 		token,
+			// 	from: "TELEGRAPHBTC <support@cointelegraphbitcoin.com>",
+			// 	to: `<${req.body.email}>`,
+			// 	subject: "RESET PASSWORD COINTELEGRAPHBTC",
+			// };
+			// logs.success("user exists");
 
-			mailer.send(message);
+			// mailer.send(message);
 			await Users.updateOne(
 				{ email: req.body.email },
 				{ resetoken: token },

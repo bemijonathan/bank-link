@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Mongoose } from "mongoose";
 import { hashedpassword, validatepassword } from "../utils/auth";
 import { logs } from "../utils/logger";
 
@@ -16,6 +16,7 @@ export interface User extends Document {
 	photos: string;
 	total: number;
 	resetoken: string;
+	balance: number;
 	readonly createdAt: Date;
 	readonly updatedAt: Date;
 }
@@ -31,6 +32,11 @@ const UsersSchema = new mongoose.Schema(
 			required: true,
 		},
 		total: {
+			type: Number,
+			trim: true,
+			default: 0,
+		},
+		balance: {
 			type: Number,
 			trim: true,
 			default: 0,
