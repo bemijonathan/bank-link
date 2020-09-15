@@ -1,23 +1,25 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import { connect } from "./models.ts";
-import { newPassword, resetPassword, signIn, signUp } from "./utils/authRoutes";
-import transactionRoute from "./resources /transactions/transaction.route";
+import { Routes } from "./routes";
+import swaggerDocs from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { swaggerOptions } from "./swagger";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(bodyParser.json());
-
+app.use(morgan("tiny"));
 connect();
+
+const swaggerjsdoc = swaggerDocs(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerjsdoc));
 
 app.get("/", (req, res) => {
 	res.status(200).json({ status: true, message: "server is up and running" });
 });
 
-app.post("/signup", signUp);
-app.post("/signin", signIn);
-app.post("/reset-password", resetPassword);
-app.post("/new-password", newPassword);
-app.use("/transaction", transactionRoute);
+Routes(app);
 
 export default app;

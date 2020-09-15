@@ -12,6 +12,13 @@ import { hash } from "bcrypt";
 let f = new FormatResponse();
 let e = new CustomError();
 
+/**
+ * @function singup
+ * users can sign up here
+ * @param {object} req request object
+ * @param {object} res response object
+ */
+
 export const signUp = async (req: Request, res: Response) => {
 	try {
 		let user: User = await Users.create(req.body);
