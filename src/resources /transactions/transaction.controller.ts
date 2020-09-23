@@ -1,6 +1,9 @@
 import { Response, Request } from "express";
 import mongoose from "mongoose";
-import { TransactionModel } from "../../models.ts/transaction.model";
+import {
+	Transaction,
+	TransactionModel,
+} from "../../models.ts/transaction.model";
 import usermodel, { User } from "../../models.ts/user.model";
 import { CustomError } from "../../utils/error";
 import { FormatResponse } from "../../utils/formatResponse";
@@ -13,9 +16,13 @@ class TransactionController {
 
 	async getAll(req: Request, res: Response) {
 		try {
-			const transactions = await TransactionModel.find({
-				_id: req.body.authenticatedUser._id,
-			})
+			const transactions = await TransactionModel.find()
+				.or([
+					{
+						creditor: req.body.authenticatedUser._id,
+						debitor: req.body.authenticatedUser._id,
+					},
+				])
 				.populate("user")
 				.lean();
 
@@ -25,7 +32,24 @@ class TransactionController {
 			e.unprocessedEntity(res, error);
 		}
 	}
-	getOne() {}
+	async getOne(req: Request, res: Response) {
+		try {
+			const transactionDetails = TransactionModel.findOne({
+				creditor: req.body.authenticatedUser._id,
+				_id: req.params.id,
+			}).populate("user");
+
+			if (transactionDetails) {
+				f.sendResponse(res, 200, transactionDetails);
+			} else {
+				e.notfound(res);
+			}
+			// res.send()transactionDetails.
+		} catch (error) {
+			logs.error(error);
+			e.serverError(res);
+		}
+	}
 	async createOne(req: Request, res: Response) {
 		const session = await mongoose.startSession();
 		await session.startTransaction();
@@ -60,6 +84,7 @@ class TransactionController {
 				throw new Error("insufficient funds");
 			}
 		} catch (error) {
+			logs.error(error);
 			await session.abortTransaction();
 			e.unprocessedEntity(res, error);
 		} finally {
@@ -67,8 +92,6 @@ class TransactionController {
 			await TransactionModel.create({ ...req.body, status });
 		}
 	}
-	deleteOne() {}
-	updateOne() {}
 }
 
 export default new TransactionController();

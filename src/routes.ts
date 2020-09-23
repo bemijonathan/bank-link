@@ -1,6 +1,7 @@
 import transactionRoute from "./resources /transactions/transaction.route";
 import { Express } from "express";
 import { signUp, signIn, resetPassword, newPassword } from "./utils/authRoutes";
+import userRoute from "./resources /users/user.route";
 
 export const Routes = (app: Express) => {
 	/**
@@ -67,4 +68,5 @@ export const Routes = (app: Express) => {
 	app.post("/reset-password", resetPassword);
 	app.post("/new-password", newPassword);
 	app.use("/transaction", transactionRoute);
+	app.use("/user", userRoute);
 };
