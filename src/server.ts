@@ -6,11 +6,13 @@ import swaggerDocs from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { swaggerOptions } from "./swagger";
 import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
+app.use(cors());
 connect();
 
 const swaggerjsdoc = swaggerDocs(swaggerOptions);
